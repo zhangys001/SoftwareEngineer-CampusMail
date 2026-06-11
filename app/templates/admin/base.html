@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}管理端 - 校园快递收发系统{% endblock %}
+{% block navbar %}
+<div class="topbar">
+<h1>📦 校园快递收发系统</h1>
+<div style="display:flex;align-items:center;gap:12px;">
+<span style="font-size:13px;">⚙️ {{ session.name }}</span>
+<a href="{{ url_for('admin.overview') }}">数据概览</a>
+<a href="{{ url_for('admin.users') }}">用户管理</a>
+<a href="{{ url_for('admin.announcements') }}">公告管理</a>
+<a href="{{ url_for('admin.stats') }}">快递统计</a>
+<a href="{{ url_for('auth.logout') }}" style="background:rgba(255,255,255,.2);">退出</a>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "student/base.html" %}
+{% block content %}
+<div class="panel">
+<h3>📬 我的快递</h3>
+<div class="sub-nav" style="margin-top:12px;">
+<a href="{{ url_for('student.packages') }}" class="{{ 'active' if not status_filter }}">全部</a>
+<a href="{{ url_for('student.packages', status='pending') }}" class="{{ 'active' if status_filter=='pending' }}">待取</a>
+<a href="{{ url_for('student.packages', status='picked') }}" class="{{ 'active' if status_filter=='picked' }}">已取</a>
+</div>
+<table>
+<tr><th>取件码</th><th>快递公司</th><th>快递单号</th><th>货架位置</th><th>到达时间</th><th>状态</th><th>操作</th></tr>
+{% for p in packages %}
+<tr>
+<td><b style="color:#1a73e8;">{{ p.pickup_code }}</b></td>
+<td>{{ p.company.company_name }}</td>
+<td>{{ p.tracking_no }}</td>
+<td>{{ p.slot_code or '-' }}</td>
+<td>{{ p.arrived_at.strftime('%Y-%m-%d %H:%M') }}</td>
+<td>
+{% if p.status == 'pending' %}<span class="tag tag-pending">待取</span>
+{% elif p.status == 'picked' %}<span class="tag tag-picked">已取</span>
+{% else %}<span class="tag tag-disabled">{{ p.status }}</span>{% endif %}
+</td>
+<td>
+{% if p.status == 'pending' %}
+<a href="{{ url_for('student.pickup_code', package_id=p.package_id) }}" class="btn btn-primary">出示取件码</a>
+{% else %}-{% endif %}
+</td>
+</tr>
+{% endfor %}
+{% if not packages %}
+<tr><td colspan="7" style="text-align:center;color:#888;padding:30px;">暂无快递记录</td></tr>
+{% endif %}
+</table>
+</div>
+{% endblock %}

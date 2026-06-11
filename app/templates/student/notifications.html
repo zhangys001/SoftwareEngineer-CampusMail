@@ -1,0 +1,18 @@
+{% extends "student/base.html" %}
+{% block content %}
+<div class="panel">
+<h3>🔔 通知中心</h3>
+{% for n in notifications %}
+<div style="padding:12px;border-bottom:1px solid #f0f0f0;{% if not n.is_read %}background:#f8faff;{% endif %}">
+<div style="font-size:13px;">{{ n.content }}</div>
+<div style="font-size:11px;color:#aaa;margin-top:4px;display:flex;justify-content:space-between;">
+<span>{{ n.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+<span>{% if n.type == 'pickup' %}📦 取件通知{% elif n.type == 'overtime' %}⚠️ 超时提醒{% else %}📢 系统通知{% endif %}</span>
+</div>
+</div>
+{% endfor %}
+{% if not notifications %}
+<p style="text-align:center;color:#888;padding:30px;">暂无通知</p>
+{% endif %}
+</div>
+{% endblock %}

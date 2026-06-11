@@ -1,0 +1,47 @@
+{% extends "staff/base.html" %}
+{% block content %}
+<div class="panel" style="max-width:800px;margin:20px auto;">
+<h3>📥 快递入库登记</h3>
+<form method="POST" style="margin-top:16px;">
+<div class="form-group">
+<label>快递单号 *</label>
+<input type="text" name="tracking_no" required placeholder="请输入或扫描快递单号">
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>快递公司 *</label>
+<select name="company_id" required>
+{% for c in companies %}
+<option value="{{ c.company_id }}">{{ c.company_name }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="form-group">
+<label>收件人学号 *</label>
+<input type="text" name="receiver_username" required placeholder="请输入收件人学号">
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>分配货架 *</label>
+<select name="shelf_id" required>
+{% for s in shelves %}
+<option value="{{ s.shelf_id }}">{{ s.shelf_code }} (剩余{{ s.free_slots }}位)</option>
+{% endfor %}
+</select>
+</div>
+<div class="form-group">
+<label>包裹类型</label>
+<select name="package_type">
+<option value="normal">普通包裹</option>
+<option value="large">大件包裹</option>
+<option value="document">文件/信件</option>
+<option value="fragile">易碎品</option>
+<option value="fresh">生鲜/冷链</option>
+</select>
+</div>
+</div>
+<button type="submit" class="btn btn-success" style="width:100%;padding:12px;font-size:14px;">✅ 确认入库</button>
+</form>
+</div>
+{% endblock %}

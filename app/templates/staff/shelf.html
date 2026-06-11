@@ -1,0 +1,29 @@
+{% extends "staff/base.html" %}
+{% block content %}
+<div class="panel">
+<h3>🗄️ 货架状态总览</h3>
+<div class="stats-row">
+<div class="stat-card"><div class="num">{{ total }}</div><div class="label">总货架数</div></div>
+<div class="stat-card"><div class="num">{{ in_use }}</div><div class="label">使用中</div></div>
+<div class="stat-card"><div class="num">{{ free }}</div><div class="label">空闲货架</div></div>
+<div class="stat-card"><div class="num">{{ usage_rate }}%</div><div class="label">库位使用率</div></div>
+</div>
+<table>
+<tr><th>货架编号</th><th>总库位</th><th>已占用</th><th>空闲</th><th>使用率</th><th>状态</th></tr>
+{% for s in shelves %}
+<tr>
+<td><b>{{ s.shelf_code }}</b></td>
+<td>{{ s.total_slots }}</td>
+<td>{{ s.used_slots }}</td>
+<td>{{ s.free_slots }}</td>
+<td>{{ s.usage_rate }}%</td>
+<td>
+{% if s.status == 'normal' %}<span class="tag tag-normal">正常</span>
+{% elif s.status == 'almost_full' %}<span class="tag tag-full">将满</span>
+{% else %}<span class="tag tag-disabled">{{ s.status }}</span>{% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "staff/base.html" %}
+{% block content %}
+<div class="panel" style="max-width:800px;margin:20px auto;">
+<h3>📤 出库核销</h3>
+<form method="POST" style="margin-top:16px;">
+<div class="form-group">
+<label>取件码 / 快递单号 *</label>
+<input type="text" name="pickup_code" required placeholder="扫描或输入取件码">
+</div>
+<button type="submit" class="btn btn-success" style="width:100%;padding:12px;font-size:14px;">确认出库</button>
+</form>
+</div>
+<div class="panel" style="max-width:800px;margin:0 auto;">
+<h3>📋 今日出库记录</h3>
+<table>
+<tr><th>取件码</th><th>快递单号</th><th>取件人</th><th>取件方式</th><th>出库时间</th></tr>
+{% for r in today_records %}
+<tr>
+<td><b style="color:#1a73e8;">{{ r[2] }}</b></td>
+<td>{{ r[1] }}</td>
+<td>{{ r[3] }}</td>
+<td><span class="tag tag-picked">{{ r[0].pickup_type }}</span></td>
+<td>{{ r[0].picked_at.strftime('%H:%M') }}</td>
+</tr>
+{% endfor %}
+{% if not today_records %}
+<tr><td colspan="5" style="text-align:center;color:#888;">今日暂无出库记录</td></tr>
+{% endif %}
+</table>
+</div>
+{% endblock %}

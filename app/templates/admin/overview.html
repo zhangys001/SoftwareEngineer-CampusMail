@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="stats-row">
+<div class="stat-card"><div class="num">{{ total_packages }}</div><div class="label">累计快递量</div></div>
+<div class="stat-card"><div class="num">{{ month_packages }}</div><div class="label">本月快递量</div></div>
+<div class="stat-card"><div class="num">{{ today_in }}</div><div class="label">今日入库</div></div>
+<div class="stat-card"><div class="num">{{ today_out }}</div><div class="label">今日出库</div></div>
+</div>
+<div class="stats-row">
+<div class="stat-card"><div class="num">{{ staff_count }}</div><div class="label">员工账号</div></div>
+<div class="stat-card"><div class="num">{{ student_count }}</div><div class="label">学生用户</div></div>
+<div class="stat-card"><div class="num">{{ pending }}</div><div class="label">当前待取件</div></div>
+<div class="stat-card"><div class="num">{{ accuracy }}%</div><div class="label">出库准确率</div></div>
+</div>
+<div class="col2">
+<div class="panel">
+<h3>📊 近7天快递量趋势</h3>
+<div style="display:flex;align-items:flex-end;gap:8px;height:150px;padding:10px 0;">
+{% for t in trend %}
+<div style="flex:1;text-align:center;">
+<div style="background:#1a73e8;height:{{ (t.count / (trend|map(attribute='count')|max or 1) * 120)|int }}px;border-radius:4px 4px 0 0;"></div>
+<span style="font-size:10px;">{{ t.day }}</span><br>
+<span style="font-size:10px;">{{ t.count }}</span>
+</div>
+{% endfor %}
+{% if not trend %}
+<p style="text-align:center;color:#888;width:100%;">暂无数据</p>
+{% endif %}
+</div>
+</div>
+<div class="panel">
+<h3>📋 快递公司分布</h3>
+{% for c in company_dist %}
+<div style="display:flex;justify-content:space-between;margin:8px 0;align-items:center;font-size:13px;">
+{{ c.company_name }}
+<span style="flex:1;margin:0 12px;height:8px;background:#eee;border-radius:4px;display:inline-block;">
+<span style="display:block;width:{{ (c.count / (company_dist|map(attribute='count')|max or 1) * 100)|int }}%;height:8px;background:#1a73e8;border-radius:4px;"></span>
+</span>
+{{ c.count }}件
+</div>
+{% endfor %}
+{% if not company_dist %}
+<p style="text-align:center;color:#888;">暂无数据</p>
+{% endif %}
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "student/base.html" %}
+{% block content %}
+<div class="col2">
+<div class="panel">
+<h3>🤝 新建代取授权</h3>
+{% if pending_packages %}
+<form method="POST" style="margin-top:16px;">
+<div class="form-group">
+<label>选择快递</label>
+<select name="package_id" required>
+{% for p in pending_packages %}
+<option value="{{ p.package_id }}">{{ p.pickup_code }} - {{ p.company.company_name }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="form-group">
+<label>被授权人学号</label>
+<input type="text" name="authorizee_username" required placeholder="请输入被授权人学号">
+</div>
+<button type="submit" class="btn btn-primary" style="width:100%;padding:12px;">确认授权</button>
+</form>
+{% else %}
+<p style="color:#888;font-size:13px;margin-top:16px;">暂无待授权的快递</p>
+{% endif %}
+</div>
+
+<div class="panel">
+<h3>📋 授权记录</h3>
+<table>
+<tr><th>快递</th><th>被授权人</th><th>授权码</th><th>状态</th><th>创建时间</th><th>操作</th></tr>
+{% for a in my_auths %}
+<tr>
+<td>{{ a.package.pickup_code }}</td>
+<td>{{ a.authorizee.name }}</td>
+<td><b style="color:#1a73e8;">{{ a.auth_code }}</b></td>
+<td>
+{% if a.status == 'valid' %}<span class="tag tag-pending">有效</span>
+{% elif a.status == 'used' %}<span class="tag tag-picked">已使用</span>
+{% elif a.status == 'expired' %}<span class="tag tag-disabled">已过期</span>
+{% else %}<span class="tag tag-disabled">已撤销</span>{% endif %}
+</td>
+<td>{{ a.created_at.strftime('%m-%d %H:%M') }}</td>
+<td>
+{% if a.status == 'valid' %}
+<a href="{{ url_for('student.revoke_auth', auth_id=a.auth_id) }}" class="btn btn-danger" onclick="return confirm('确定撤销此授权？')">撤销</a>
+{% else %}-{% endif %}
+</td>
+</tr>
+{% endfor %}
+{% if not my_auths %}
+<tr><td colspan="6" style="text-align:center;color:#888;padding:20px;">暂无授权记录</td></tr>
+{% endif %}
+</table>
+</div>
+</div>
+{% endblock %}

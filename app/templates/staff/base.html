@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}员工端 - 校园快递收发系统{% endblock %}
+{% block navbar %}
+<div class="topbar">
+<h1>📦 校园快递收发系统</h1>
+<div style="display:flex;align-items:center;gap:12px;">
+<span style="font-size:13px;">📋 {{ session.name }}</span>
+<a href="{{ url_for('staff.dashboard') }}">工作台</a>
+<a href="{{ url_for('staff.checkin') }}">快递入库</a>
+<a href="{{ url_for('staff.checkout') }}">出库核销</a>
+<a href="{{ url_for('staff.shelf') }}">货架管理</a>
+<a href="{{ url_for('auth.logout') }}" style="background:rgba(255,255,255,.2);">退出</a>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "student/base.html" %}
+{% block content %}
+<div class="stats-row">
+<div class="stat-card"><div class="num">{{ pending }}</div><div class="label">待取快递</div></div>
+<div class="stat-card"><div class="num">{{ picked }}</div><div class="label">已取快递</div></div>
+<div class="stat-card"><div class="num">{{ notifications|length }}</div><div class="label">未读通知</div></div>
+<div class="stat-card"><div class="num" style="font-size:20px;">🏫</div><div class="label">校园驿站</div></div>
+</div>
+
+{% if announcements %}
+<div class="panel">
+<h3>📢 系统公告</h3>
+{% for ann in announcements %}
+<div style="padding:12px;background:#fff8e1;border-radius:8px;font-size:13px;margin-bottom:8px;">
+<strong>{{ ann[0] }}</strong>：{{ ann[1] }}
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+<div class="col2">
+<div class="panel">
+<h3>📦 待取快递</h3>
+{% if pending > 0 %}
+<p style="font-size:13px;color:#888;margin-bottom:12px;">您有 <b style="color:#e65100;">{{ pending }}</b> 件快递待取</p>
+<a href="{{ url_for('student.packages', status='pending') }}" class="btn btn-primary">查看待取快递</a>
+{% else %}
+<p style="font-size:13px;color:#888;">暂无待取快递</p>
+{% endif %}
+</div>
+<div class="panel">
+<h3>🔔 最新通知</h3>
+{% if notifications %}
+{% for n in notifications %}
+<div style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px;">
+{{ n.content }}<br>
+<span style="font-size:11px;color:#aaa;">{{ n.created_at.strftime('%m-%d %H:%M') }}</span>
+</div>
+{% endfor %}
+{% else %}
+<p style="font-size:13px;color:#888;">暂无新通知</p>
+{% endif %}
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "student/base.html" %}
+{% block content %}
+<div class="panel" style="max-width:600px;margin:20px auto;">
+<h3>📦 快递详情</h3>
+<div style="margin-top:16px;">
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;">
+<span style="color:#888;">快递单号</span><span>{{ package.tracking_no }}</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;">
+<span style="color:#888;">快递公司</span><span>{{ package.company.company_name }}</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;">
+<span style="color:#888;">取件码</span><span style="color:#1a73e8;font-weight:700;font-size:18px;">{{ package.pickup_code }}</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;">
+<span style="color:#888;">货架位置</span><span>{{ package.slot_code or '-' }}</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;">
+<span style="color:#888;">状态</span>
+<span>{% if package.status == 'pending' %}<span class="tag tag-pending">待取</span>{% else %}<span class="tag tag-picked">已取</span>{% endif %}</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;">
+<span style="color:#888;">到达时间</span><span>{{ package.arrived_at.strftime('%Y-%m-%d %H:%M') }}</span>
+</div>
+{% if package.picked_at %}
+<div style="display:flex;justify-content:space-between;padding:10px 0;">
+<span style="color:#888;">取件时间</span><span>{{ package.picked_at.strftime('%Y-%m-%d %H:%M') }}</span>
+</div>
+{% endif %}
+</div>
+<div style="margin-top:20px;text-align:center;">
+{% if package.status == 'pending' %}
+<a href="{{ url_for('student.pickup_code', package_id=package.package_id) }}" class="btn btn-primary" style="padding:10px 30px;font-size:14px;">出示取件码</a>
+{% endif %}
+<a href="{{ url_for('student.packages') }}" class="btn btn-outline" style="padding:10px 30px;font-size:14px;">返回列表</a>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="panel">
+<h3>👥 用户管理</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+<form method="GET" style="display:flex;gap:8px;">
+<input type="text" name="search" value="{{ search }}" placeholder="搜索学号/工号/姓名" style="padding:6px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:250px;">
+<button type="submit" class="btn btn-primary">搜索</button>
+</form>
+<button class="btn btn-primary" onclick="document.getElementById('addModal').style.display='flex'">+ 新增用户</button>
+</div>
+<table style="margin-top:12px;">
+<tr><th>账号</th><th>姓名</th><th>角色</th><th>手机号</th><th>状态</th><th>注册时间</th><th>操作</th></tr>
+{% for u in users %}
+<tr>
+<td>{{ u.username }}</td>
+<td>{{ u.name }}</td>
+<td>
+{% if u.role == 'student' %}<span class="tag tag-normal">学生</span>
+{% elif u.role == 'staff' %}<span class="tag tag-pending">员工</span>
+{% else %}<span class="tag tag-full">管理员</span>{% endif %}
+</td>
+<td>{{ u.phone or '-' }}</td>
+<td>{% if u.status == 'normal' %}正常{% else %}<span style="color:#c62828;">已禁用</span>{% endif %}</td>
+<td>{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else '-' }}</td>
+<td>
+{% if u.role != 'admin' %}
+<form method="POST" style="display:inline;">
+<input type="hidden" name="action" value="toggle">
+<input type="hidden" name="user_id" value="{{ u.user_id }}">
+<button type="submit" class="btn {% if u.status == 'normal' %}btn-danger{% else %}btn-success{% endif %}" onclick="return confirm('确定{{ "禁用" if u.status == "normal" else "启用" }}该用户？')">
+{{ "禁用" if u.status == "normal" else "启用" }}
+</button>
+</form>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<div id="addModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:200;">
+<div style="background:#fff;border-radius:12px;padding:30px;width:450px;max-width:90vw;">
+<h3 style="margin-bottom:16px;">新增用户</h3>
+<form method="POST">
+<input type="hidden" name="action" value="add">
+<div class="form-group"><label>账号 *</label><input type="text" name="username" required></div>
+<div class="form-group"><label>姓名 *</label><input type="text" name="name" required></div>
+<div class="form-group"><label>角色</label>
+<select name="role"><option value="student">学生</option><option value="staff">员工</option></select>
+</div>
+<div class="form-group"><label>手机号</label><input type="text" name="phone"></div>
+<div class="form-group"><label>密码</label><input type="text" name="password" value="123456"></div>
+<div style="display:flex;gap:12px;margin-top:16px;">
+<button type="submit" class="btn btn-primary" style="flex:1;padding:10px;">确认添加</button>
+<button type="button" class="btn btn-outline" style="flex:1;padding:10px;" onclick="document.getElementById('addModal').style.display='none'">取消</button>
+</div>
+</form>
+</div>
+</div>
+{% endblock %}

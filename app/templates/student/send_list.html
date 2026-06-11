@@ -1,0 +1,31 @@
+{% extends "student/base.html" %}
+{% block content %}
+<div class="panel">
+<h3>📮 寄件记录</h3>
+<div style="margin-bottom:12px;">
+<a href="{{ url_for('student.send') }}" class="btn btn-primary">+ 新建寄件预约</a>
+</div>
+<table>
+<tr><th>订单ID</th><th>收件人</th><th>收件地址</th><th>快递公司</th><th>物品类型</th><th>状态</th><th>下单时间</th></tr>
+{% for o in orders %}
+<tr>
+<td>{{ o.order_id }}</td>
+<td>{{ o.receiver_name }}</td>
+<td>{{ o.receiver_addr[:30] }}{% if o.receiver_addr|length > 30 %}...{% endif %}</td>
+<td>{{ o.company.company_name }}</td>
+<td>{{ o.item_type }}</td>
+<td>
+{% if o.status == 'pending' %}<span class="tag tag-pending">待处理</span>
+{% elif o.status == 'processing' %}<span class="tag tag-normal">处理中</span>
+{% elif o.status == 'completed' %}<span class="tag tag-picked">已完成</span>
+{% else %}<span class="tag tag-disabled">{{ o.status }}</span>{% endif %}
+</td>
+<td>{{ o.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+</tr>
+{% endfor %}
+{% if not orders %}
+<tr><td colspan="7" style="text-align:center;color:#888;padding:30px;">暂无寄件记录</td></tr>
+{% endif %}
+</table>
+</div>
+{% endblock %}

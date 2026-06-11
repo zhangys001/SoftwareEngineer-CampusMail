@@ -1,0 +1,45 @@
+{% extends "staff/base.html" %}
+{% block content %}
+<div class="stats-row">
+<div class="stat-card"><div class="num">{{ today_in }}</div><div class="label">今日入库</div></div>
+<div class="stat-card"><div class="num">{{ today_out }}</div><div class="label">今日出库</div></div>
+<div class="stat-card"><div class="num">{{ pending }}</div><div class="label">待取件</div></div>
+<div class="stat-card"><div class="num" style="{% if stale > 0 %}color:#c62828;{% endif %}">{{ stale }}</div><div class="label">滞留件</div></div>
+</div>
+<div class="col2">
+<div class="panel">
+<h3>🔔 最新入库记录</h3>
+<table>
+<tr><th>单号</th><th>快递公司</th><th>取件码</th><th>时间</th></tr>
+{% for p in recent_in %}
+<tr>
+<td>{{ p.tracking_no }}</td>
+<td>{{ p.company.company_name }}</td>
+<td><b style="color:#1a73e8;">{{ p.pickup_code }}</b></td>
+<td>{{ p.arrived_at.strftime('%H:%M') }}</td>
+</tr>
+{% endfor %}
+{% if not recent_in %}
+<tr><td colspan="4" style="text-align:center;color:#888;">今日暂无入库记录</td></tr>
+{% endif %}
+</table>
+</div>
+<div class="panel">
+<h3>⚠️ 滞留件预警</h3>
+<table>
+<tr><th>快递单号</th><th>取件码</th><th>入库时间</th><th>操作</th></tr>
+{% for p in stale_list %}
+<tr>
+<td>{{ p.tracking_no }}</td>
+<td>{{ p.pickup_code }}</td>
+<td>{{ p.arrived_at.strftime('%m-%d') }}</td>
+<td><a href="{{ url_for('staff.send_reminder', package_id=p.package_id) }}" class="btn btn-warning">提醒</a></td>
+</tr>
+{% endfor %}
+{% if not stale_list %}
+<tr><td colspan="4" style="text-align:center;color:#888;">暂无滞留件</td></tr>
+{% endif %}
+</table>
+</div>
+</div>
+{% endblock %}

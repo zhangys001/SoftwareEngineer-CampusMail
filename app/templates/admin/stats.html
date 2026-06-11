@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="panel">
+<h3>📈 快递统计数据</h3>
+<form method="GET" style="display:flex;gap:12px;align-items:end;margin-bottom:16px;">
+<div class="form-group" style="margin:0;"><label>起始日期</label><input type="date" name="start_date" value="{{ start_date }}"></div>
+<div class="form-group" style="margin:0;"><label>截止日期</label><input type="date" name="end_date" value="{{ end_date }}"></div>
+<button type="submit" class="btn btn-primary">查询</button>
+</form>
+{% if stats_data %}
+<table>
+<tr><th>日期</th><th>入库数</th><th>出库数</th><th>滞留数</th></tr>
+{% for s in stats_data %}
+<tr>
+<td>{{ s.date }}</td>
+<td>{{ s.in_count }}</td>
+<td>{{ s.out_count }}</td>
+<td style="{% if s.retained > 10 %}color:#c62828;font-weight:600;{% endif %}">{{ s.retained }}</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<p style="text-align:center;color:#888;padding:30px;">请选择日期范围查询统计数据</p>
+{% endif %}
+</div>
+{% endblock %}
