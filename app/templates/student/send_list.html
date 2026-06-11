@@ -13,7 +13,7 @@
 <td>{{ o.receiver_name }}</td>
 <td>{{ o.receiver_addr[:30] }}{% if o.receiver_addr|length > 30 %}...{% endif %}</td>
 <td>{{ o.company.company_name }}</td>
-<td>{{ o.item_type }}</td>
+<td>{% if o.item_type == 'document' %}文件{% elif o.item_type == 'clothing' %}衣物{% elif o.item_type == 'electronics' %}电子产品{% elif o.item_type == 'books' %}书籍{% else %}其他{% endif %}</td>
 <td>
 {% if o.status == 'pending' %}<span class="tag tag-pending">待处理</span>
 {% elif o.status == 'processing' %}<span class="tag tag-normal">处理中</span>

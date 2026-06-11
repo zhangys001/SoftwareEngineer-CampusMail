@@ -19,7 +19,7 @@
 <td><b style="color:#1a73e8;">{{ r[2] }}</b></td>
 <td>{{ r[1] }}</td>
 <td>{{ r[3] }}</td>
-<td><span class="tag tag-picked">{{ r[0].pickup_type }}</span></td>
+<td><span class="tag tag-picked">{% if r[0].pickup_type == 'self' %}本人取件{% else %}授权代取{% endif %}</span></td>
 <td>{{ r[0].picked_at.strftime('%H:%M') }}</td>
 </tr>
 {% endfor %}

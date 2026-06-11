@@ -23,7 +23,7 @@ def home():
     pending = Package.query.filter_by(receiver_id=user_id, status='pending').count()
     picked = Package.query.filter_by(receiver_id=user_id, status='picked').count()
     notifications = Notification.query.filter_by(user_id=user_id, is_read=False).order_by(Notification.created_at.desc()).limit(5).all()
-    announcements = db.session.query(db.text("SELECT title, content FROM announcement WHERE status='published' ORDER BY published_at DESC LIMIT 1")).all()
+    announcements = db.session.execute(db.text("SELECT title, content FROM announcement WHERE status='published' ORDER BY published_at DESC LIMIT 1")).all()
     return render_template('student/home.html', pending=pending, picked=picked, notifications=notifications, announcements=announcements)
 
 
