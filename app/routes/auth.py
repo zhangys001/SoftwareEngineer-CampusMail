@@ -24,6 +24,7 @@ def login():
             flash('账号已被禁用', 'error')
             return render_template('auth/login.html')
 
+        session.permanent = True
         session['user_id'] = user.user_id
         session['role'] = user.role
         session['name'] = user.name

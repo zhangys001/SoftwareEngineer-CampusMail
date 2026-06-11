@@ -7,10 +7,18 @@ from .models import db
 def create_app():
     app = Flask(__name__)
 
+    from datetime import timedelta
+
     base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-    app.config['SECRET_KEY'] = 'campus-mail-secret-key-2026'
+    app.config['SECRET_KEY'] = os.urandom(24).hex()
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, 'campus_mail.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # Session config — supports multiple concurrent users
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
     db.init_app(app)
 
