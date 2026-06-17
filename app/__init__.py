@@ -4,14 +4,14 @@ from flask import Flask
 from .models import db
 
 
-def create_app():
+def create_app(test_db_uri=None):
     app = Flask(__name__)
 
     from datetime import timedelta
 
     base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     app.config['SECRET_KEY'] = os.urandom(24).hex()
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, 'campus_mail.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = test_db_uri or ('sqlite:///' + os.path.join(base_dir, 'campus_mail.db'))
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Session config — supports multiple concurrent users

@@ -119,12 +119,15 @@ def checkout():
     if request.method == 'POST':
         pickup_code = request.form.get('pickup_code', '').strip()
         if not pickup_code:
-            flash('请输入取件码', 'error')
+            flash('请输入取件码或快递单号', 'error')
             return redirect(url_for('staff.checkout'))
 
+        # 支持取件码和快递单号两种输入方式
         pkg = Package.query.filter_by(pickup_code=pickup_code, status='pending').first()
         if not pkg:
-            flash('取件码无效或快递已被取走', 'error')
+            pkg = Package.query.filter_by(tracking_no=pickup_code, status='pending').first()
+        if not pkg:
+            flash('未找到待出库的快递，请检查输入是否正确', 'error')
             return redirect(url_for('staff.checkout'))
 
         pkg.status = 'picked'
