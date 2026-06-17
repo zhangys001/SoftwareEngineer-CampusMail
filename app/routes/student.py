@@ -63,15 +63,37 @@ def send():
     companies = ExpressCompany.query.filter_by(status='enabled').all()
 
     if request.method == 'POST':
+        receiver_name = request.form.get('receiver_name', '').strip()
+        receiver_phone = request.form.get('receiver_phone', '').strip()
+        receiver_addr = request.form.get('receiver_addr', '').strip()
+        company_id_raw = request.form.get('company_id')
+        item_type = request.form.get('item_type', 'other')
+
+        if not receiver_name:
+            flash('请输入收件人姓名', 'error')
+            return redirect(url_for('student.send'))
+
+        if not receiver_phone:
+            flash('请输入收件人电话', 'error')
+            return redirect(url_for('student.send'))
+
+        if not receiver_addr:
+            flash('请输入收件人地址', 'error')
+            return redirect(url_for('student.send'))
+
+        if not company_id_raw:
+            flash('请选择快递公司', 'error')
+            return redirect(url_for('student.send'))
+
         order = SendOrder(
             sender_id=user_id,
             sender_name=user.name,
             sender_phone=user.phone or '',
-            receiver_name=request.form.get('receiver_name', ''),
-            receiver_phone=request.form.get('receiver_phone', ''),
-            receiver_addr=request.form.get('receiver_addr', ''),
-            company_id=int(request.form.get('company_id')),
-            item_type=request.form.get('item_type', 'other'),
+            receiver_name=receiver_name,
+            receiver_phone=receiver_phone,
+            receiver_addr=receiver_addr,
+            company_id=int(company_id_raw),
+            item_type=item_type,
             status='pending'
         )
         db.session.add(order)
@@ -97,8 +119,14 @@ def authorization():
     pending_packages = Package.query.filter_by(receiver_id=user_id, status='pending').all()
 
     if request.method == 'POST':
-        package_id = int(request.form.get('package_id'))
+        package_id_raw = request.form.get('package_id')
         authorizee_username = request.form.get('authorizee_username', '').strip()
+
+        if not package_id_raw:
+            flash('请选择要授权的包裹', 'error')
+            return redirect(url_for('student.authorization'))
+
+        package_id = int(package_id_raw)
 
         authorizee = User.query.filter_by(username=authorizee_username, role='student').first()
         if not authorizee:

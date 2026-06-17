@@ -54,14 +54,25 @@ def checkin():
 
     if request.method == 'POST':
         tracking_no = request.form.get('tracking_no', '').strip()
-        company_id = int(request.form.get('company_id'))
+        company_id_raw = request.form.get('company_id')
         receiver_username = request.form.get('receiver_username', '').strip()
-        shelf_id = int(request.form.get('shelf_id'))
+        shelf_id_raw = request.form.get('shelf_id')
         package_type = request.form.get('package_type', 'normal')
 
         if not tracking_no:
             flash('请输入快递单号', 'error')
             return redirect(url_for('staff.checkin'))
+
+        if not company_id_raw:
+            flash('请选择快递公司', 'error')
+            return redirect(url_for('staff.checkin'))
+
+        if not shelf_id_raw:
+            flash('请选择分配货架', 'error')
+            return redirect(url_for('staff.checkin'))
+
+        company_id = int(company_id_raw)
+        shelf_id = int(shelf_id_raw)
 
         existing = Package.query.filter_by(tracking_no=tracking_no).first()
         if existing:
