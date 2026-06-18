@@ -148,9 +148,19 @@ def authorization():
             status='valid',
             expires_at=datetime.now() + timedelta(hours=24)
         )
+
+        # 获取包裹信息用于通知
+        pkg = Package.query.get(package_id)
+        authorizer = User.query.get(user_id)
+        notif = Notification(
+            user_id=authorizee.user_id,
+            content=f'{authorizer.name}授权您代取快递，取件码: {pkg.pickup_code}，授权码: {auth_code}，请在24小时内使用',
+            type='authorization'
+        )
         db.session.add(auth_record)
+        db.session.add(notif)
         db.session.commit()
-        flash(f'授权成功！授权码: {auth_code}', 'success')
+        flash(f'授权成功！授权码: {auth_code}，已通知被授权人', 'success')
         return redirect(url_for('student.authorization'))
 
     my_auths = Authorization.query.filter_by(authorizer_id=user_id).order_by(Authorization.created_at.desc()).all()
