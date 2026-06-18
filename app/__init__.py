@@ -10,15 +10,16 @@ def create_app(test_db_uri=None):
     from datetime import timedelta
 
     base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-    app.config['SECRET_KEY'] = os.urandom(24).hex()
+    # 固定SECRET_KEY，保证重启后session不失效；生产环境应从环境变量读取
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'campus-mail-secret-key-2026')
     app.config['SQLALCHEMY_DATABASE_URI'] = test_db_uri or ('sqlite:///' + os.path.join(base_dir, 'campus_mail.db'))
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    # Session config — supports multiple concurrent users
-    app.config['SESSION_TYPE'] = 'filesystem'
+    # Session config — 支持多用户并发登录
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['SESSION_COOKIE_NAME'] = 'campus_mail_session'
 
     db.init_app(app)
 
