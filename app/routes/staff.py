@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from ..models import db, Package, ExpressCompany, Shelf, User, PickupRecord, Notification
+from ..models import db, Package, ExpressCompany, Shelf, User, PickupRecord, Notification, Authorization
 
 staff_bp = Blueprint('staff', __name__)
 
@@ -129,6 +129,8 @@ def checkin():
 def checkout():
     if request.method == 'POST':
         pickup_code = request.form.get('pickup_code', '').strip()
+        auth_code = request.form.get('auth_code', '').strip()
+
         if not pickup_code:
             flash('请输入取件码或快递单号', 'error')
             return redirect(url_for('staff.checkout'))
@@ -141,6 +143,31 @@ def checkout():
             flash('未找到待出库的快递，请检查输入是否正确', 'error')
             return redirect(url_for('staff.checkout'))
 
+        # 判断取件方式：有授权码则验证代取
+        if auth_code:
+            auth_record = Authorization.query.filter_by(
+                package_id=pkg.package_id,
+                auth_code=auth_code,
+                status='valid'
+            ).first()
+            if not auth_record:
+                flash('授权码无效或已过期，请检查后重试', 'error')
+                return redirect(url_for('staff.checkout'))
+            if auth_record.expires_at < datetime.now():
+                auth_record.status = 'expired'
+                db.session.commit()
+                flash('授权码已过期，请联系发件人重新授权', 'error')
+                return redirect(url_for('staff.checkout'))
+            picker_id = auth_record.authorizee_id
+            pickup_type = 'proxy'
+            # 标记授权为已使用
+            auth_record.status = 'used'
+            picker_name = User.query.get(picker_id).name if picker_id else '未知'
+        else:
+            picker_id = pkg.receiver_id
+            pickup_type = 'self'
+            picker_name = pkg.receiver.name if pkg.receiver else '未知'
+
         pkg.status = 'picked'
         pkg.picked_at = datetime.now()
 
@@ -151,14 +178,15 @@ def checkout():
 
         record = PickupRecord(
             package_id=pkg.package_id,
-            picker_id=pkg.receiver_id,
-            pickup_type='self',
+            picker_id=picker_id,
+            pickup_type=pickup_type,
             operator_id=session['user_id']
         )
         db.session.add(record)
         db.session.commit()
 
-        flash(f'核销成功！快递 {pkg.tracking_no} 已出库', 'success')
+        type_label = '授权代取' if pickup_type == 'proxy' else '本人取件'
+        flash(f'核销成功！快递 {pkg.tracking_no} 已出库（{type_label}，取件人：{picker_name}）', 'success')
         return redirect(url_for('staff.checkout'))
 
     today = datetime.now().date()

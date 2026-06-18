@@ -5,7 +5,11 @@
 <form method="POST" style="margin-top:16px;">
 <div class="form-group">
 <label>取件码 / 快递单号 *</label>
-<input type="text" name="pickup_code" required placeholder="扫描或输入取件码">
+<input type="text" name="pickup_code" required placeholder="扫描或输入取件码/快递单号">
+</div>
+<div class="form-group">
+<label>授权码（代取时填写）</label>
+<input type="text" name="auth_code" placeholder="本人取件可留空，代取请输入授权码">
 </div>
 <button type="submit" class="btn btn-success" style="width:100%;padding:12px;font-size:14px;">确认出库</button>
 </form>
